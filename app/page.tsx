@@ -20,8 +20,8 @@ export default async function HomePage() {
       <Navbar />
       <main>
         <Hero />
-        <FeaturedCategories categories={categories} />
         <FeaturedProducts products={products} />
+        <FeaturedCategories categories={categories} />
         <Testimonials testimonials={testimonials} />
         <VideoShowcase />
         <Newsletter />
