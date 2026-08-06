@@ -152,14 +152,14 @@ export function Navbar() {
         </form>
 
         {/* Actions */}
-        {/* <div className="flex items-center gap-1 md:ml-2">
+        <div className="flex items-center gap-1 md:ml-2">
           <Button
             variant="ghost"
             size="icon-lg"
             className="relative rounded-full"
             aria-label="Wishlist"
             nativeButton={false}
-            render={<Link href="/wishlist" />}
+            render={<Link href="/" />}
           >
             <Heart className="size-5" />
             {wishlistCount > 0 && (
@@ -172,7 +172,7 @@ export function Navbar() {
             className="relative rounded-full"
             aria-label="Cart"
             nativeButton={false}
-            render={<Link href="/cart" />}
+            render={<Link href="/" />}
           >
             <ShoppingCart className="size-5" />
             {itemCount > 0 && <Badge count={itemCount} />}
@@ -183,7 +183,7 @@ export function Navbar() {
             className="hidden rounded-full sm:inline-flex"
             aria-label="Account"
             nativeButton={false}
-            render={<Link href="/account" />}
+            render={<Link href="/" />}
           >
             <User className="size-5" />
           </Button>
@@ -196,7 +196,7 @@ export function Navbar() {
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </Button>
-        </div> */}
+        </div>
       </div>
 
       {/* Mobile menu */}
