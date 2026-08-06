@@ -18,13 +18,25 @@ export function Hero() {
     <section className="relative isolate overflow-hidden">
       {/* Background image with dark green overlay */}
       <div className="absolute inset-0 -z-10">
-        <Image
+             <Image
           src="/images/her_3.jpeg"
-          alt=""
+          alt="Hero Background"
           fill
           priority
+          quality={100}
           sizes="100vw"
-          className="object-cover "
+          className="hidden object-cover object-center md:block"
+        />
+
+        {/* Mobile */}
+        <Image
+          src="/images/hero_2.png"
+          alt="Hero Background"
+          fill
+          priority
+          quality={100}
+          sizes="100vw"
+          className="object-cover object-top md:hidden"
         />
         <div className="absolute inset-0 bg-[oklch(0.28_0.07_156)]/82" />
         <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.22_0.06_156)] via-transparent to-transparent" />
