@@ -11,6 +11,7 @@ import {
   User,
   X,
 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -63,10 +64,17 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Leaf className="size-5" />
+            <Image
+              src="/images/logo.png"
+              alt="Verdant Logo"
+              width={200}
+              height={80}
+              priority
+              className="w-24 h-auto" // 96px wide
+            />
           </span>
           <span className="font-heading text-xl font-bold tracking-tight text-foreground">
-            Verdant
+            Packo.ofc
           </span>
         </Link>
 
@@ -143,7 +151,7 @@ export function Navbar() {
         </form>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 md:ml-2">
+        {/* <div className="flex items-center gap-1 md:ml-2">
           <Button
             variant="ghost"
             size="icon-lg"
@@ -187,7 +195,7 @@ export function Navbar() {
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile menu */}

@@ -19,12 +19,12 @@ export function Hero() {
       {/* Background image with dark green overlay */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/hero.png"
+          src="/images/her_3.jpeg"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover "
         />
         <div className="absolute inset-0 bg-[oklch(0.28_0.07_156)]/82" />
         <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.22_0.06_156)] via-transparent to-transparent" />
@@ -56,7 +56,7 @@ export function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-4 py-1.5 text-sm font-medium text-primary-foreground backdrop-blur"
           >
             <ShoppingBag className="size-4" />
-            New season · up to 40% off
+            New season · Best offers
           </motion.span>
 
           <motion.h1

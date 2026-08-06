@@ -1,6 +1,6 @@
 import { AtSign, Globe, Leaf, MessageCircle, Send } from 'lucide-react'
 import Link from 'next/link'
-
+import Image from 'next/image'
 const columns = [
   {
     title: 'Company',
@@ -46,15 +46,21 @@ export function Footer() {
           <div className="max-w-sm">
             <Link href="/" className="flex items-center gap-2">
               <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Leaf className="size-5" />
+                <Image
+                  src="/images/logo.png"
+                  alt="Verdant Logo"
+                  width={200}
+                  height={80}
+                  priority
+                  className="w-24 h-auto" />
               </span>
               <span className="font-heading text-xl font-bold text-foreground">
-                Verdant
+                Packo.ofc
               </span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Premium products across electronics, fashion, home and beauty —
-              curated for a seamless, sustainable shopping experience.
+              Premium products across Accessories, perfumes, and travel kits, designed for a life well lived. Explore our curated collection and enjoy a
+               sustainable shopping experience.
             </p>
             <div className="mt-6 flex items-center gap-2">
               {socials.map((s) => (

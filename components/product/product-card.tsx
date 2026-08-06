@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Heart, ShoppingCart, Zap } from 'lucide-react'
+import { Heart, ShoppingCart, Zap ,SmilePlus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -50,8 +50,8 @@ const handleView = () => {
             src={product.image || '/placeholder.svg'}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 668px) 40vw, 20vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-90"
           />
         </div>
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
@@ -147,8 +147,8 @@ const handleView = () => {
             onClick={handleView}
 
           >
-            <ShoppingCart className="size-4" />
-            View
+            <SmilePlus className="size-4" />
+            View Details
           </Button>
 
         </div>

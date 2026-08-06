@@ -14,7 +14,7 @@ export function Newsletter() {
     e.preventDefault()
     if (!email.trim()) return
     toast.success('Subscribed!', {
-      description: 'Thanks for joining the Verdant list.',
+      description: 'Thanks for joining the Packo.ofc list.',
     })
     setEmail('')
   }
@@ -35,7 +35,7 @@ export function Newsletter() {
           <Mail className="size-6" />
         </span>
         <h2 className="relative mt-5 font-heading text-2xl font-bold text-primary-foreground sm:text-3xl text-balance">
-          Join the Verdant newsletter
+          Join the Packo.ofc newsletter
         </h2>
         <p className="relative mx-auto mt-3 max-w-md text-primary-foreground/80">
           Get early access to new arrivals, exclusive offers and seasonal sales.
