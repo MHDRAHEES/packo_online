@@ -1,7 +1,7 @@
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
   }).format(amount)
 }
