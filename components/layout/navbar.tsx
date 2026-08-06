@@ -114,7 +114,8 @@ export function Navbar() {
                     {categories.map((c) => (
                       <Link
                         key={c.id}
-                        href={`/shop?category=${c.slug}`}
+                        // href={`/shop?category=${c.slug}`}
+                        href="/"
                         className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                       >
                         <span className="font-medium">{c.name}</span>
@@ -239,7 +240,8 @@ export function Navbar() {
                   {categories.map((c) => (
                     <Link
                       key={c.id}
-                      href={`/shop?category=${c.slug}`}
+                      // href={`/shop?category=${c.slug}`}
+                      href="/"
                       onClick={() => setMobileOpen(false)}
                       className="rounded-lg px-3 py-2 text-sm text-foreground/80 transition-colors hover:bg-accent"
                     >

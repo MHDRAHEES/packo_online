@@ -35,7 +35,7 @@ export function FeaturedCategories({
               transition={{ duration: 0.4, delay: i * 0.06 }}
             >
               <Link
-                href={`/shop?category=${category.slug}`}
+                href="/"
                 className="group flex h-full flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
               >
                 <span className="flex size-14 items-center justify-center rounded-2xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">

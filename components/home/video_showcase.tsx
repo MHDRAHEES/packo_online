@@ -7,17 +7,17 @@ import { Reveal } from '@/components/motion/reveal'
 const videos = [
   {
     id: 1,
-    title: 'Premium Collection Showcase',
+    title: 'product Promo',
     description: 'Explore our latest premium products.',
     type: 'youtube',
-    url: 'https://www.youtube.com/embed/YOUR_VIDEO_ID',
+    url: 'https://youtube.com/shorts/sMO-IurmaYM?si=6N573FsjxDQXR_Mh',
   },
   {
     id: 2,
-    title: 'Customer Experience',
-    description: 'See how customers love Verdant.',
+    title: 'Product Review',
+    description: 'See your favorite products in action.',
     type: 'youtube',
-    url: 'https://www.youtube.com/embed/YOUR_VIDEO_ID',
+    url: 'https://youtube.com/shorts/wybnzDytBVw?si=ZhY4yZRgbfn_CMLM',
   },
   {
     id: 3,
@@ -43,7 +43,7 @@ export function VideoShowcase() {
           </h2>
 
           <p className="mx-auto mt-3 max-w-2xl text-gray-600">
-            Watch product stories, customer experiences and latest collections.
+            Watch product stories, product review and latest collections.
           </p>
         </Reveal>
 

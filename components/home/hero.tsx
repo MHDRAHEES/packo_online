@@ -59,7 +59,7 @@ export function Hero() {
             New season · Best offers
           </motion.span>
 
-          <motion.h1
+          {/* <motion.h1
        
             className="mt-6 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight text-primary-foreground text-balance sm:text-6xl lg:text-7xl"
           >
@@ -71,7 +71,7 @@ export function Hero() {
             className="mt-6 max-w-xl text-lg leading-relaxed text-primary-foreground/85 text-pretty"
           >
          Discover premium car accessories, fresh sprays, and travel kits designed for every journey.
-          </motion.p>
+          </motion.p> */}
 
           <motion.div
        
@@ -102,8 +102,8 @@ export function Hero() {
             className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-primary-foreground/80"
           >
             {[
-              ['10k+', 'Happy customers'],
-              ['500+', 'Premium products'],
+              ['100+', 'Happy customers'],
+              ['5+', 'Premium products'],
               ['4.9', 'Average rating'],
             ].map(([value, label]) => (
               <div key={label}>

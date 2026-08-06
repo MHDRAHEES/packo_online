@@ -54,7 +54,7 @@ export const categories: Category[] = [
 const sharedReviews = [
   {
     id: 'r1',
-    author: 'Alex Johnson',
+    author: 'Sandra Lee',
     avatar: '/images/avatars/avatar-1.png',
     rating: 5,
     date: 'June 2, 2026',
@@ -307,8 +307,8 @@ export const products: Product[] = [
 export const testimonials: Testimonial[] = [
   {
     id: 't1',
-    name: 'Sophia Bennett',
-    role: 'Verified Buyer',
+    name: 'Sandra Lee',
+    role: 'Customer',
     avatar: '/images/avatars/avatar-1.png',
     rating: 5,
     quote:
@@ -316,8 +316,8 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: 't2',
-    name: 'Marcus Lee',
-    role: 'Verified Buyer',
+    name: 'Salim AP',
+    role: 'Customer',
     avatar: '/images/avatars/avatar-2.png',
     rating: 5,
     quote:
@@ -325,8 +325,8 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: 't3',
-    name: 'Ana Duarte',
-    role: 'Verified Buyer',
+    name: 'Hiba KP',
+    role: 'Customer',
     avatar: '/images/avatars/avatar-3.png',
     rating: 4,
     quote:
