@@ -73,7 +73,7 @@ const handleView = () => {
         <button
           type="button"
           onClick={() => {
-            toggle(product.id)
+            toggle(product)
             toast(wished ? 'Removed from wishlist' : 'Added to wishlist', {
               description: product.name,
             })
@@ -101,7 +101,9 @@ const handleView = () => {
 
       <div className="flex flex-1 flex-col p-4">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {product.category}
+          {typeof product.category === 'string'
+            ? product.category
+            : (product.category as any)?.name || 'General'}
         </p>
         <h3
           onClick={handleView}

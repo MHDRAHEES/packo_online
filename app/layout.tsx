@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import { Suspense } from 'react'
 
+import { AuthProvider } from '@/components/context/authContext'
 import { CartProvider } from '@/components/providers/cart-provider'
 import { WishlistProvider } from '@/components/providers/wishlist-provider'
 import { ProductProvider } from '@/components/providers/product_provider'
@@ -56,14 +57,16 @@ export default function RootLayout({
     >
       <body className="bg-background font-sans antialiased">
         <Suspense fallback={null}>
-          <ProductProvider>
-            <CartProvider>
-              <WishlistProvider>
-                {children}
-                <Toaster />
-              </WishlistProvider>
-            </CartProvider>
-          </ProductProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  {children}
+                  <Toaster />
+                </WishlistProvider>
+              </CartProvider>
+            </ProductProvider>
+          </AuthProvider>
         </Suspense>
 
         {process.env.NODE_ENV === 'production' && <Analytics />}

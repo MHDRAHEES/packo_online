@@ -56,7 +56,9 @@ export default function ProductPage() {
 
             {/* Category */}
             <span className="mb-3 w-fit rounded-full bg-green-100 px-4 py-1 text-sm font-semibold text-green-800">
-              {selectedProduct.category}
+              {typeof selectedProduct.category === 'string'
+                ? selectedProduct.category
+                : (selectedProduct.category as any)?.name || 'General'}
             </span>
 
 

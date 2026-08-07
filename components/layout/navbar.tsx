@@ -15,6 +15,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/components/context/authContext'
 import { useCart } from '@/components/providers/cart-provider'
 import { useWishlist } from '@/components/providers/wishlist-provider'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ export function Navbar() {
   const router = useRouter()
   const { itemCount } = useCart()
   const { count: wishlistCount } = useWishlist()
+  const { user } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
@@ -159,7 +161,7 @@ export function Navbar() {
             className="relative rounded-full"
             aria-label="Wishlist"
             nativeButton={false}
-            render={<Link href="/" />}
+            render={<Link href="/wishlist" />}
           >
             <Heart className="size-5" />
             {wishlistCount > 0 && (
@@ -183,7 +185,7 @@ export function Navbar() {
             className="hidden rounded-full sm:inline-flex"
             aria-label="Account"
             nativeButton={false}
-            render={<Link href="/" />}
+            render={<Link href={user ? '/dashboard' : '/login'} />}
           >
             <User className="size-5" />
           </Button>
