@@ -37,7 +37,7 @@ export function Navbar() {
   const router = useRouter()
   const { itemCount } = useCart()
   const { count: wishlistCount } = useWishlist()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -213,7 +213,7 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon-lg"
-            className="hidden rounded-full sm:inline-flex"
+            className="rounded-full flex"
             aria-label="Account"
             nativeButton={false}
             render={<Link href={user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/login'} />}
@@ -303,7 +303,6 @@ export function Navbar() {
                   {categories.map((c) => (
                     <Link
                       key={c.id}
-                      // href={`/shop?category=${c.slug}`}
                       href="/"
                       onClick={() => setMobileOpen(false)}
                       className="rounded-lg px-3 py-2 text-sm text-foreground/80 transition-colors hover:bg-accent"
@@ -312,6 +311,66 @@ export function Navbar() {
                     </Link>
                   ))}
                 </div>
+              </div>
+
+              {/* Mobile Account / Login & Signup Section */}
+              <div className="pt-3 border-t border-border">
+                {user ? (
+                  <div className="space-y-2 p-3 rounded-2xl bg-muted/40 border border-border">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                          {user.name.slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground">{user.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{user.email}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 capitalize">
+                        {user.role}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <Link
+                        href={user.role === 'admin' ? '/admin' : '/dashboard'}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center justify-center gap-1.5 rounded-xl bg-primary text-primary-foreground py-2 text-xs font-semibold shadow-sm active:scale-95 transition-all"
+                      >
+                        <User className="size-3.5" />
+                        <span>My Account</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileOpen(false)
+                          logout().finally(() => router.push('/'))
+                        }}
+                        className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 py-2 text-xs font-semibold active:scale-95 transition-all"
+                      >
+                        <span>Log Out</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-background px-4 py-2.5 text-xs font-bold text-foreground hover:bg-accent active:scale-95 transition-all"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/20 active:scale-95 transition-all"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
