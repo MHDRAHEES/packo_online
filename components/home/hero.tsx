@@ -1,140 +1,166 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, ChevronDown, ShoppingBag } from 'lucide-react'
+import { ArrowRight, ChevronDown, Sparkles, ShieldCheck, Truck, Star, Award } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-const container = {
-  hidden: {},
+const containerVariants = {
+  hidden: { opacity: 0 },
   show: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
   },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
 }
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden">
-      {/* Background image with dark green overlay */}
-      <div className="absolute inset-0 -z-10">
-             <Image
+    <section className="relative isolate overflow-hidden min-h-[90vh] flex items-center bg-slate-950 text-white">
+      {/* Background Image Layer with Gradient Overlay */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {/* Desktop Hero Image */}
+        <Image
           src="/images/her_3.jpeg"
-          alt="Hero Background"
+          alt="Packo Storefront Hero"
           fill
           priority
-          quality={100}
+          quality={95}
           sizes="100vw"
-          className="hidden object-cover object-center md:block"
+          className="hidden object-cover object-center md:block opacity-60 scale-105 transition-all duration-1000"
         />
 
-        {/* Mobile */}
+        {/* Mobile Hero Image */}
         <Image
           src="/images/hero_2.png"
-          alt="Hero Background"
+          alt="Packo Storefront Mobile Hero"
           fill
           priority
-          quality={100}
+          quality={95}
           sizes="100vw"
-          className="object-cover object-top md:hidden"
+          className="object-cover object-top md:hidden opacity-60"
         />
-        <div className="absolute inset-0 bg-[oklch(0.28_0.07_156)]/82" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.22_0.06_156)] via-transparent to-transparent" />
+
+        {/* Dark Emerald Dual Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/60" />
       </div>
 
-      {/* Floating accents */}
+      {/* Floating Animated Glass Accent Orbs */}
       <motion.div
         aria-hidden
-        animate={{ y: [0, -18, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute right-[8%] top-24 -z-10 size-40 rounded-full bg-[oklch(0.6_0.12_162)]/25 blur-2xl"
+        animate={{ y: [0, -20, 0], scale: [1, 1.08, 1] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute right-[12%] top-20 -z-10 size-72 rounded-full bg-emerald-500/20 blur-3xl"
       />
       <motion.div
         aria-hidden
-        animate={{ y: [0, 20, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-[6%] bottom-16 -z-10 size-52 rounded-full bg-[oklch(0.5_0.1_160)]/25 blur-3xl"
+        animate={{ y: [0, 25, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute left-[8%] bottom-16 -z-10 size-96 rounded-full bg-teal-600/15 blur-[120px]"
       />
 
-      <div className="mx-auto flex min-h-[88vh] max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 w-full">
         <motion.div
-          variants={container}
+          variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="max-w-2xl"
+          className="max-w-3xl space-y-6"
         >
-          <motion.span
-      
-            className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-4 py-1.5 text-sm font-medium text-primary-foreground backdrop-blur"
-          >
-            <ShoppingBag className="size-4" />
-            New season · Best offers
-          </motion.span>
+          {/* Top Category Badge */}
+          <motion.div variants={itemVariants}>
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-emerald-400 backdrop-blur-md shadow-lg shadow-emerald-500/10">
+              <Sparkles className="size-4 text-emerald-400" />
+              <span>Premium Automotive Essentials & Storefront 2026</span>
+            </span>
+          </motion.div>
 
-          {/* <motion.h1
-       
-            className="mt-6 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight text-primary-foreground text-balance sm:text-6xl lg:text-7xl"
+          {/* Hero Main Heading */}
+          <motion.h1
+            variants={itemVariants}
+            className="font-heading text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl"
           >
-            Premium products for a life well lived
+            Elevate Every Drive With{' '}
+            <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
+              Packo Excellence
+            </span>
           </motion.h1>
 
+          {/* Hero Subtitle */}
           <motion.p
-         
-            className="mt-6 max-w-xl text-lg leading-relaxed text-primary-foreground/85 text-pretty"
+            variants={itemVariants}
+            className="max-w-2xl text-base sm:text-lg leading-relaxed text-slate-300 font-normal"
           >
-         Discover premium car accessories, fresh sprays, and travel kits designed for every journey.
-          </motion.p> */}
+            Discover luxury car tissue boxes, long-lasting ambient car sprays, and refined travel accessories crafted for ultimate comfort and elegance.
+          </motion.p>
 
+          {/* Call to Action Buttons */}
           <motion.div
-       
-            className="mt-9 flex flex-col gap-3 sm:flex-row"
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2"
           >
             <Button
               size="lg"
-              className="h-12 rounded-full bg-primary-foreground px-7 text-base text-primary hover:bg-primary-foreground/90"
+              className="h-13 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-8 text-base shadow-xl shadow-emerald-500/25 transition-all hover:shadow-emerald-500/40 active:scale-[0.98]"
               nativeButton={false}
-              // render={<Link href="/shop" />}
+              render={<Link href="/shop" />}
             >
-              Shop Now
-              <ArrowRight className="size-4" />
+              Shop Collection Now
+              <ArrowRight className="ml-2 size-5" />
             </Button>
+
             <Button
               size="lg"
               variant="outline"
-              className="h-12 rounded-full border-primary-foreground/40 bg-transparent px-7 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              className="h-13 rounded-2xl border-slate-700 bg-slate-900/60 backdrop-blur-md px-8 text-base text-slate-100 hover:bg-slate-800 hover:text-white hover:border-slate-500 transition-all active:scale-[0.98]"
               nativeButton={false}
-              // render={<Link href="/shop" />}
+              render={<Link href="/shop?featured=true" />}
             >
-              Explore Collection
+              Featured Products
             </Button>
           </motion.div>
 
+          {/* Key Metric Highlights & Trust Indicators */}
           <motion.div
-          
-            className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-primary-foreground/80"
+            variants={itemVariants}
+            className="pt-8 border-t border-slate-800/80 grid grid-cols-3 gap-6 sm:gap-10 max-w-xl"
           >
-            {[
-              ['100+', 'Happy customers'],
-              ['5+', 'Premium products'],
-              ['4.9', 'Average rating'],
-            ].map(([value, label]) => (
-              <div key={label}>
-                <p className="font-heading text-2xl font-bold text-primary-foreground">
-                  {value}
-                </p>
-                <p className="text-sm">{label}</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1 text-emerald-400 font-extrabold text-2xl sm:text-3xl font-heading">
+                <span>10K+</span>
               </div>
-            ))}
+              <p className="text-xs text-slate-400 font-medium">Satisfied Drivers</p>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-emerald-400 font-extrabold text-2xl sm:text-3xl font-heading">
+                <span>4.9</span>
+                <Star className="size-5 fill-amber-400 text-amber-400" />
+              </div>
+              <p className="text-xs text-slate-400 font-medium">Customer Rating</p>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-1 text-emerald-400 font-extrabold text-2xl sm:text-3xl font-heading">
+                <span>100%</span>
+              </div>
+              <p className="text-xs text-slate-400 font-medium">Quality Guarantee</p>
+            </div>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll Down Indicator */}
       <motion.div
         aria-hidden
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-primary-foreground/70"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-slate-400 hover:text-emerald-400 transition-colors"
       >
         <ChevronDown className="size-6" />
       </motion.div>

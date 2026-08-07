@@ -7,6 +7,7 @@ import { AuthProvider } from '@/components/context/authContext'
 import { CartProvider } from '@/components/providers/cart-provider'
 import { WishlistProvider } from '@/components/providers/wishlist-provider'
 import { ProductProvider } from '@/components/providers/product_provider'
+import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 
 import './globals.css'
@@ -57,16 +58,18 @@ export default function RootLayout({
     >
       <body className="bg-background font-sans antialiased">
         <Suspense fallback={null}>
-          <AuthProvider>
-            <ProductProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  {children}
-                  <Toaster />
-                </WishlistProvider>
-              </CartProvider>
-            </ProductProvider>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ProductProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    {children}
+                    <Toaster />
+                  </WishlistProvider>
+                </CartProvider>
+              </ProductProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </Suspense>
 
         {process.env.NODE_ENV === 'production' && <Analytics />}

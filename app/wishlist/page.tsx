@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useAuth } from '@/components/context/authContext'
 import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
 import { useCart } from '@/components/providers/cart-provider'
@@ -16,6 +17,7 @@ import type { Product } from '@/lib/types'
 
 export default function WishlistPage() {
   const router = useRouter()
+  const { user } = useAuth()
   const { items, remove, clearWishlist, count } = useWishlist()
   const { addItem } = useCart()
   const { setSelectedProduct } = useProduct()
@@ -163,11 +165,20 @@ export default function WishlistPage() {
 
                       {/* Actions */}
                       <div className="mt-5 flex items-center gap-2">
+                        {user?.role !== 'admin' && (
+                          <Button
+                            onClick={() => handleAddToCart(product)}
+                            className="flex-1 rounded-xl font-semibold shadow-sm transition-transform active:scale-95"
+                          >
+                            <ShoppingCart className="size-4 mr-2" /> Add to Cart
+                          </Button>
+                        )}
                         <Button
-                          onClick={() => handleAddToCart(product)}
-                          className="flex-1 rounded-xl font-semibold shadow-sm transition-transform active:scale-95"
+                          variant="outline"
+                          onClick={() => handleViewProduct(product)}
+                          className={user?.role === 'admin' ? "flex-1 rounded-xl font-semibold" : "rounded-xl border-border"}
                         >
-                          <ShoppingCart className="size-4 mr-2" /> Add to Cart
+                          View Details
                         </Button>
                         <Button
                           variant="outline"

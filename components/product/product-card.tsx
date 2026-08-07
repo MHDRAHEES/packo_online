@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useAuth } from '@/components/context/authContext'
 import { useCart } from '@/components/providers/cart-provider'
 import { useWishlist } from '@/components/providers/wishlist-provider'
 import { StarRating } from '@/components/star-rating'
@@ -18,6 +19,7 @@ import { useProduct } from "../providers/product_provider"
 
 export function ProductCard({ product }: { product: Product }) {
   const router = useRouter();
+  const { user } = useAuth()
   const { addItem } = useCart()
   const { has, toggle } = useWishlist()
   const wished = has(product.id)
@@ -142,17 +144,30 @@ const handleView = () => {
           </span>
         </div>
         <div className="mt-4 flex items-center gap-2">
-
+          {user?.role !== 'admin' && (
+            <Button
+              variant="default"
+              className="h-10 flex-1 rounded-lg font-medium"
+              disabled={!product.inStock}
+              onClick={(e) => {
+                e.stopPropagation()
+                addItem(product, 1)
+                toast.success(`Added ${product.name} to cart!`)
+              }}
+            >
+              <ShoppingCart className="size-4 mr-1.5" />
+              Add to Cart
+            </Button>
+          )}
           <Button
             variant="outline"
-            className="h-10 flex-1 rounded-lg"
+            className={cn("h-10 shrink-0 rounded-lg", user?.role === 'admin' ? "flex-1" : "w-10 px-0")}
             onClick={handleView}
-
+            title="View Details"
           >
-            <SmilePlus className="size-4" />
-            View Details
+            <SmilePlus className="size-4 mr-1.5" />
+            {user?.role === 'admin' ? 'View Details' : ''}
           </Button>
-
         </div>
 
 

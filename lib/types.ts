@@ -19,6 +19,7 @@ export interface Review {
 
 export interface Product {
   id: string
+  _id?: string
   name: string
   slug: string
   category: string
@@ -65,8 +66,17 @@ export interface CustomerInfo {
 
 export type PaymentMethod = 'cod' | 'razorpay'
 
+export type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled'
+
+export interface OrderStatusHistory {
+  status: OrderStatus
+  timestamp: string
+  note?: string
+}
+
 export interface Order {
   id: string
+  _id?: string
   items: CartItem[]
   customer: CustomerInfo
   paymentMethod: PaymentMethod
@@ -75,5 +85,43 @@ export interface Order {
   tax: number
   discount: number
   total: number
+  totalPrice?: number
+  orderStatus?: OrderStatus
+  user?: {
+    _id?: string
+    name?: string
+    email?: string
+  }
+  isPaid?: boolean
+  paidAt?: string
+  isDelivered?: boolean
+  deliveredAt?: string
   createdAt: string
+  updatedAt?: string
+  statusHistory?: OrderStatusHistory[]
 }
+
+export interface RazorpayOrder {
+  id?: string
+  amount?: number
+  currency?: string
+  [key: string]: any
+}
+
+export interface UploadImageResult {
+  url: string
+  public_id?: string
+}
+
+export interface SalesReport {
+  totalRevenue: number
+  totalOrders: number
+  avgOrderValue: number
+  deliveredCount: number
+  processingCount: number
+  shippedCount: number
+  cancelledCount: number
+  paymentMethodBreakdown: Record<string, number>
+}
+
+

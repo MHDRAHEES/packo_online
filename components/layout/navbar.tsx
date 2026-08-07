@@ -6,8 +6,10 @@ import {
   Heart,
   Leaf,
   Menu,
+  Moon,
   Search,
   ShoppingCart,
+  Sun,
   User,
   X,
 } from 'lucide-react'
@@ -18,6 +20,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/components/context/authContext'
 import { useCart } from '@/components/providers/cart-provider'
 import { useWishlist } from '@/components/providers/wishlist-provider'
+import { useTheme } from '@/components/providers/theme-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { categories } from '@/lib/data'
@@ -35,6 +38,7 @@ export function Navbar() {
   const { itemCount } = useCart()
   const { count: wishlistCount } = useWishlist()
   const { user } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
@@ -168,24 +172,51 @@ export function Navbar() {
               <Badge count={wishlistCount} />
             )}
           </Button>
+          {user?.role !== 'admin' && (
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              className="relative rounded-full"
+              aria-label="Cart"
+              nativeButton={false}
+              render={<Link href="/cart" />}
+            >
+              <ShoppingCart className="size-5" />
+              {itemCount > 0 && <Badge count={itemCount} />}
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon-lg"
-            className="relative rounded-full"
-            aria-label="Cart"
-            nativeButton={false}
-            render={<Link href="/" />}
+            className="rounded-full text-foreground/80 hover:text-foreground transition-all"
+            aria-label="Toggle Day/Night Mode"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Day Mode' : 'Switch to Dark Night Mode'}
           >
-            <ShoppingCart className="size-5" />
-            {itemCount > 0 && <Badge count={itemCount} />}
+            {theme === 'dark' ? (
+              <Sun className="size-5 text-amber-400 transition-transform duration-300" />
+            ) : (
+              <Moon className="size-5 text-slate-700 dark:text-slate-200 transition-transform duration-300" />
+            )}
           </Button>
+          {user?.role === 'admin' && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:inline-flex border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 font-semibold text-xs rounded-full px-3"
+              nativeButton={false}
+              render={<Link href="/admin" />}
+            >
+              Admin Panel
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon-lg"
             className="hidden rounded-full sm:inline-flex"
             aria-label="Account"
             nativeButton={false}
-            render={<Link href={user ? '/dashboard' : '/login'} />}
+            render={<Link href={user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/login'} />}
           >
             <User className="size-5" />
           </Button>
@@ -212,6 +243,26 @@ export function Navbar() {
             className="overflow-hidden border-t border-border bg-background lg:hidden"
           >
             <div className="space-y-4 px-4 py-4 sm:px-6">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/60 border border-border">
+                <span className="text-xs font-semibold text-foreground">Theme Mode</span>
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-background text-foreground border border-border shadow-sm active:scale-95 transition-all"
+                >
+                  {theme === 'dark' ? (
+                    <>
+                      <Sun className="size-4 text-amber-400" />
+                      <span>Light Day Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="size-4 text-slate-700" />
+                      <span>Dark Night Mode</span>
+                    </>
+                  )}
+                </button>
+              </div>
               <form onSubmit={submitSearch} className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -223,6 +274,16 @@ export function Navbar() {
                 />
               </form>
               <nav className="grid gap-1">
+                {user?.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 transition-colors hover:bg-emerald-500/20 flex items-center justify-between"
+                  >
+                    <span>⚡ Admin Panel</span>
+                    <span className="text-[10px] font-mono uppercase bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-400">admin</span>
+                  </Link>
+                )}
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}

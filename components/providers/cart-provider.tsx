@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -19,10 +20,40 @@ interface CartContextValue {
   clearCart: () => void
 }
 
+const CART_STORAGE_KEY = 'verdant_packo_cart'
+
 const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) {
+          setItems(parsed)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load cart from localStorage:', error)
+    } finally {
+      setIsHydrated(true)
+    }
+  }, [])
+
+  // Save cart to localStorage on changes
+  useEffect(() => {
+    if (!isHydrated) return
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error)
+    }
+  }, [items, isHydrated])
 
   const addItem = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
@@ -87,3 +118,4 @@ export function useCart() {
   if (!ctx) throw new Error('useCart must be used within a CartProvider')
   return ctx
 }
+

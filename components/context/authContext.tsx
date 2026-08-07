@@ -44,8 +44,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (credentials: Record<string, unknown>) => {
     const { data } = await api.post<{
-        user: User | undefined; data?: { user?: User } 
-}>('/auth/login', credentials);
+      user: User | undefined;
+      accessToken?: string;
+      data?: { user?: User; accessToken?: string };
+    }>('/auth/login', credentials);
+
+    const token = data?.data?.accessToken ?? (data as any)?.accessToken;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', token);
+    }
+
     const resolvedUser = data?.data?.user ?? data?.user ?? data?.data;
     const nextUser = (resolvedUser as User | undefined) ?? null;
     setUser(nextUser);
@@ -54,8 +62,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const register = async (userData: Record<string, unknown>) => {
     const { data } = await api.post<{
-        user: User | undefined; data?: { user?: User } 
-}>('/auth/register', userData);
+      user: User | undefined;
+      accessToken?: string;
+      data?: { user?: User; accessToken?: string };
+    }>('/auth/register', userData);
+
+    const token = data?.data?.accessToken ?? (data as any)?.accessToken;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', token);
+    }
+
     const resolvedUser = data?.data?.user ?? data?.user ?? data?.data;
     const nextUser = (resolvedUser as User | undefined) ?? null;
     setUser(nextUser);
@@ -63,8 +79,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await api.post('/auth/logout');
-    setUser(null);
+    try {
+      await api.post('/auth/logout')
+    } catch (error) {
+      console.warn('Logout API notification error:', error)
+    } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('accessToken')
+      }
+      setUser(null)
+    }
   };
 
   return (
