@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { useAuth } from '@/components/context/authContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,7 +38,20 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#f5fbf6_0%,#eef7ef_100%)] px-4 py-12">
-      <div className="w-full max-w-md rounded-3xl border border-border bg-background p-8 shadow-xl">
+      <div className="w-full max-w-md rounded-3xl border border-border bg-background p-6 sm:p-8 shadow-xl relative">
+        {/* Back Button */}
+        <div className="mb-6 flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push('/')}
+            className="rounded-xl border-emerald-800/20 text-foreground hover:bg-emerald-500/10 hover:text-primary text-xs font-semibold transition-all active:scale-95"
+          >
+            <ArrowLeft className="mr-1.5 h-3.5 w-3.5 text-primary" />
+            Back to Store
+          </Button>
+        </div>
+
         <div className="mb-8 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Welcome back</p>
           <h1 className="mt-2 text-3xl font-semibold text-foreground">Log in to your account</h1>
