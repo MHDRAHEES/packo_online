@@ -8,6 +8,7 @@ import { CartProvider } from '@/components/providers/cart-provider'
 import { WishlistProvider } from '@/components/providers/wishlist-provider'
 import { ProductProvider } from '@/components/providers/product_provider'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { WhatsAppWidget } from '@/components/layout/whatsapp-widget'
 import { Toaster } from '@/components/ui/toaster'
 
 import './globals.css'
@@ -65,6 +66,7 @@ export default function RootLayout({
                   <WishlistProvider>
                     {children}
                     <Toaster />
+                    <WhatsAppWidget />
                   </WishlistProvider>
                 </CartProvider>
               </ProductProvider>

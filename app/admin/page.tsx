@@ -27,12 +27,17 @@ import {
   ChevronRight,
   ArrowUpRight,
   Lock,
+  FileSpreadsheet,
+  FileText,
+  Printer,
+  Download,
 } from 'lucide-react'
 import { useAuth } from '@/components/context/authContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { api, resolveValidProductImage } from '@/lib/api'
 import { formatCurrency } from '@/lib/format'
+import { exportOrdersToExcel, exportOrdersToPDF, exportProductsToExcel } from '@/lib/export-utils'
 import type { Order, OrderStatus, Product, UploadImageResult } from '@/lib/types'
 
 export default function AdminPage() {
@@ -343,6 +348,32 @@ export default function AdminPage() {
               <RefreshCw className={`mr-2 h-3.5 w-3.5 ${loadingOrders ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                exportOrdersToExcel(orders)
+                toast.success('Orders data exported to Excel (.CSV) successfully!')
+              }}
+              className="border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-semibold text-xs rounded-xl"
+            >
+              <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5 text-emerald-400" />
+              Excel
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                exportOrdersToPDF(orders, metrics)
+                toast.info('Generating PDF report window...')
+              }}
+              className="border-blue-500/40 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 font-semibold text-xs rounded-xl"
+            >
+              <FileText className="mr-1.5 h-3.5 w-3.5 text-blue-400" />
+              PDF Report
+            </Button>
             <div className="hidden sm:flex items-center gap-2 border-l border-slate-800 pl-3">
               <div className="h-8 w-8 rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center font-bold text-xs">
                 {user.name.slice(0, 2).toUpperCase()}
@@ -416,6 +447,40 @@ export default function AdminPage() {
         {/* TAB 1: OVERVIEW & SALES REPORT */}
         {activeTab === 'overview' && (
           <div className="space-y-8 animate-in fade-in duration-300">
+            {/* Export Actions Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 backdrop-blur-md">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-emerald-400" /> Executive Sales & Order Summary
+                </h2>
+                <p className="text-xs text-slate-400">Export real-time sales metrics and customer order reports</p>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    exportOrdersToExcel(orders)
+                    toast.success('Exported orders report to Excel (.CSV)!')
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20"
+                >
+                  <FileSpreadsheet className="mr-1.5 h-4 w-4" /> Export Excel (.CSV)
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    exportOrdersToPDF(orders, metrics)
+                    toast.info('Opening PDF report window...')
+                  }}
+                  className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10 font-bold text-xs rounded-xl"
+                >
+                  <FileText className="mr-1.5 h-4 w-4" /> Export PDF Report
+                </Button>
+              </div>
+            </div>
+
             {/* KPI Cards Grid */}
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-md shadow-lg hover:border-emerald-500/40 transition-all">
@@ -1108,7 +1173,17 @@ export default function AdminPage() {
                 <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                     <h3 className="text-base font-bold text-white">Product Inventory ({productList.length})</h3>
-                    <span className="text-xs text-slate-400">Click "View Details" to inspect any product</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        exportProductsToExcel(productList)
+                        toast.success('Product catalog exported to Excel (.CSV)!')
+                      }}
+                      className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold rounded-xl"
+                    >
+                      <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5" /> Export Catalog (Excel)
+                    </Button>
                   </div>
 
                   {loadingProducts ? (

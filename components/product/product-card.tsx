@@ -122,18 +122,20 @@ const handleView = () => {
         </div>
 
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-lg font-bold text-foreground">
+          <span className="text-lg font-extrabold text-emerald-950 dark:text-emerald-300">
             {formatCurrency(product.price)}
           </span>
           {product.originalPrice && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="text-sm text-muted-foreground line-through font-medium">
               {formatCurrency(product.originalPrice)}
             </span>
           )}
           <span
             className={cn(
-              'ml-auto text-xs font-medium',
-              product.inStock ? 'text-secondary-foreground' : 'text-destructive',
+              'ml-auto text-xs font-bold px-2 py-0.5 rounded-full border',
+              product.inStock
+                ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                : 'bg-rose-500/10 text-rose-600 border-rose-500/20'
             )}
           >
             {product.inStock
@@ -146,8 +148,7 @@ const handleView = () => {
         <div className="mt-4 flex items-center gap-2">
           {user?.role !== 'admin' && (
             <Button
-              variant="default"
-              className="h-10 flex-1 rounded-lg font-medium"
+              className="h-10 flex-1 rounded-xl font-bold bg-[#0F5132] hover:bg-[#0B3B24] text-white shadow-md shadow-emerald-950/20 active:scale-[0.98] transition-all"
               disabled={!product.inStock}
               onClick={(e) => {
                 e.stopPropagation()
@@ -161,7 +162,10 @@ const handleView = () => {
           )}
           <Button
             variant="outline"
-            className={cn("h-10 shrink-0 rounded-lg", user?.role === 'admin' ? "flex-1" : "w-10 px-0")}
+            className={cn(
+              "h-10 shrink-0 rounded-xl border-emerald-800/30 hover:border-emerald-600 hover:bg-emerald-500/10 font-semibold",
+              user?.role === 'admin' ? "flex-1 bg-[#0F5132] text-white hover:bg-[#0B3B24]" : "w-10 px-0 text-emerald-800 dark:text-emerald-300"
+            )}
             onClick={handleView}
             title="View Details"
           >
@@ -169,8 +173,6 @@ const handleView = () => {
             {user?.role === 'admin' ? 'View Details' : ''}
           </Button>
         </div>
-
-
       </div>
     </motion.article>
   )
