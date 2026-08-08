@@ -49,6 +49,25 @@ export default function DashboardPage() {
   const [reviewedProductIds, setReviewedProductIds] = useState<string[]>([])
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null)
 
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  // Handle User Logout
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      toast.success('You have been logged out successfully.')
+      router.push('/login')
+    } catch (err) {
+      toast.error('Failed to log out. Please try again.')
+    } finally {
+      setIsLoggingOut(false)
+      setShowLogoutModal(false)
+    }
+  }
+
   // Handle Cancel Order
   const handleCancelOrder = async (orderId: string) => {
     if (!confirm(`Are you sure you want to cancel Order #${orderId}?`)) return
@@ -132,7 +151,6 @@ export default function DashboardPage() {
   if (!user) {
     return null
   }
-
   return (
     <main className="min-h-screen bg-[linear-gradient(135deg,#f8fbf8_0%,#f1f7f2_100%)] dark:bg-slate-950 py-10 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -149,8 +167,8 @@ export default function DashboardPage() {
 
           <Button
             variant="outline"
-            onClick={() => logout().finally(() => router.push('/'))}
-            className="rounded-xl border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+            onClick={() => setShowLogoutModal(true)}
+            className="rounded-xl border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/50 font-semibold text-sm transition-all"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Log out
@@ -171,8 +189,8 @@ export default function DashboardPage() {
                     Welcome, {user.name}
                   </h1>
                   <span className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold ${user.role === 'admin'
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-                      : 'bg-primary/10 text-primary border border-primary/20'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                    : 'bg-primary/10 text-primary border border-primary/20'
                     }`}>
                     <Shield className="h-3 w-3" />
                     role: "{user.role}"
@@ -223,6 +241,19 @@ export default function DashboardPage() {
                     <CheckCircle2 className="h-4 w-4" /> Verified Customer
                   </p>
                 </div>
+              </div>
+
+              {/* Logout Option */}
+              <div className="pt-4 border-t border-border space-y-2">
+                <span className="text-xs text-muted-foreground uppercase font-semibold block">Account Session</span>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowLogoutModal(true)}
+                  className="w-full justify-center gap-2 rounded-xl border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/50 font-semibold text-xs py-2.5 transition-all"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Log Out of Account
+                </Button>
               </div>
             </section>
           </div>
@@ -305,12 +336,12 @@ export default function DashboardPage() {
                             {/* Status Badge */}
                             <span
                               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${status === 'Delivered'
-                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                                  : status === 'Shipped'
-                                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
-                                    : status === 'Cancelled'
-                                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
-                                      : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                : status === 'Shipped'
+                                  ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                                  : status === 'Cancelled'
+                                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                                    : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
                                 }`}
                             >
                               {status === 'Delivered' && <CheckCircle2 className="h-3.5 w-3.5" />}
@@ -346,12 +377,12 @@ export default function DashboardPage() {
                           <div className="h-2 w-full rounded-full bg-muted overflow-hidden flex">
                             <div
                               className={`h-full transition-all ${status === 'Cancelled'
-                                  ? 'bg-rose-500 w-full'
-                                  : status === 'Delivered'
-                                    ? 'bg-emerald-500 w-full'
-                                    : status === 'Shipped'
-                                      ? 'bg-blue-500 w-2/3'
-                                      : 'bg-amber-500 w-1/3'
+                                ? 'bg-rose-500 w-full'
+                                : status === 'Delivered'
+                                  ? 'bg-emerald-500 w-full'
+                                  : status === 'Shipped'
+                                    ? 'bg-blue-500 w-2/3'
+                                    : 'bg-amber-500 w-1/3'
                                 }`}
                             />
                           </div>
@@ -538,6 +569,48 @@ export default function DashboardPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* LOGOUT CONFIRMATION MODAL */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl space-y-6 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+              <LogOut className="h-7 w-7" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-extrabold text-foreground">Sign Out of Account?</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Are you sure you want to log out, <span className="font-semibold text-foreground">{user.name}</span>? You will need to sign back in to access your orders and saved account information.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowLogoutModal(false)}
+                disabled={isLoggingOut}
+                className="w-1/2 rounded-xl text-xs font-semibold py-2.5"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-1/2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs py-2.5 shadow-md shadow-rose-600/20"
+              >
+                {isLoggingOut ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Logging out...
+                  </span>
+                ) : (
+                  'Yes, Log Out'
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       )}

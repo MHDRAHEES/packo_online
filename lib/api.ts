@@ -411,13 +411,8 @@ export const api = {
       const payload = (data as { data?: Order }).data ?? data
       return payload as Order
     } catch (error) {
-      console.warn('Falling back to local order mock:', getErrorMessage(error))
-      const order: Order = {
-        id: `VRD-${Math.floor(100000 + Math.random() * 900000)}`,
-        createdAt: new Date().toISOString(),
-        ...input,
-      }
-      return delay(order, 700)
+      console.error('Failed to create order on backend:', getErrorMessage(error))
+      throw error
     }
   },
 
@@ -426,12 +421,8 @@ export const api = {
       const { data } = await apiClient.post('/payment/checkout', { amount, orderId })
       return (data as any)?.data ?? data
     } catch (error) {
-      console.warn('Falling back to local Razorpay order mock:', getErrorMessage(error))
-      return delay({
-        id: `order_mock_${Math.random().toString(36).substring(2, 9)}`,
-        amount: amount * 100,
-        currency: 'INR',
-      })
+      console.error('Failed to create Razorpay order on backend:', getErrorMessage(error))
+      throw error
     }
   },
 
@@ -445,8 +436,8 @@ export const api = {
       const { data } = await apiClient.post('/payment/verify', paymentData)
       return (data as any)?.data ?? data
     } catch (error) {
-      console.warn('Falling back to local payment verification mock:', getErrorMessage(error))
-      return delay({ success: true, message: 'Payment verified successfully' })
+      console.error('Payment verification failed on backend:', getErrorMessage(error))
+      throw error
     }
   },
 
@@ -456,7 +447,7 @@ export const api = {
       const payload = (data as { data?: Order }).data ?? data
       return payload as Order
     } catch (error) {
-      console.warn(`Falling back to local order lookup (${id}):`, getErrorMessage(error))
+      console.error(`Failed to fetch order (${id}) from backend:`, getErrorMessage(error))
       return null
     }
   },
@@ -465,63 +456,61 @@ export const api = {
     try {
       const { data } = await apiClient.get('/orders/my-orders')
       const payload = (data as any)?.data ?? data
-      if (Array.isArray(payload) && payload.length > 0) {
-        return payload.map((ord: any) => ({
-          id: ord._id || ord.id || `VRD-${Math.floor(100000 + Math.random() * 900000)}`,
-          _id: ord._id || ord.id,
-          user: ord.user ? { _id: ord.user._id, name: ord.user.name, email: ord.user.email } : undefined,
-          customer: {
-            name: ord.user?.name || ord.shippingAddress?.name || 'Customer',
-            email: ord.user?.email || 'customer@example.com',
-            phone: ord.shippingAddress?.phone || '',
-            address: ord.shippingAddress?.address || '',
-            city: ord.shippingAddress?.city || '',
-            state: ord.shippingAddress?.state || '',
-            zip: ord.shippingAddress?.postalCode || ord.shippingAddress?.zip || '',
-          },
-          items: Array.isArray(ord.orderItems)
-            ? ord.orderItems.map((item: any) => ({
-                product: {
-                  id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
-                  _id: item.product?._id || item.product,
-                  name: item.name || 'Product Item',
-                  slug: (item.name || 'product').toLowerCase().replace(/\s+/g, '-'),
-                  category: 'General',
-                  categorySlug: 'general',
-                  price: item.price || 0,
-                  rating: 4.5,
-                  reviewCount: 10,
-                  image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
-                  gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
-                  inStock: true,
-                  stockCount: 50,
-                  shortDescription: '',
-                  description: '',
-                  specifications: [],
-                  reviews: [],
-                },
-                quantity: item.quantity || 1,
-              }))
-            : ord.items || [],
-          paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
-          subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
-          tax: ord.taxPrice || ord.tax || 0,
-          shipping: ord.shippingPrice || ord.shipping || 0,
-          discount: ord.discount || 0,
-          total: ord.totalPrice || ord.total || 0,
-          orderStatus: ord.orderStatus || (ord.isDelivered ? 'Delivered' : 'Processing'),
-          isPaid: Boolean(ord.isPaid),
-          paidAt: ord.paidAt,
-          isDelivered: Boolean(ord.isDelivered),
-          deliveredAt: ord.deliveredAt,
-          createdAt: ord.createdAt || new Date().toISOString(),
-          updatedAt: ord.updatedAt || new Date().toISOString(),
-        }))
-      }
-      return getStoredOrFallbackUserOrders()
+      const rawList = Array.isArray(payload) ? payload : (Array.isArray(data) ? data : [])
+      return rawList.map((ord: any) => ({
+        id: ord._id || ord.id || `VRD-${Math.floor(100000 + Math.random() * 900000)}`,
+        _id: ord._id || ord.id,
+        user: ord.user ? { _id: ord.user._id, name: ord.user.name, email: ord.user.email } : undefined,
+        customer: {
+          name: ord.user?.name || ord.shippingAddress?.name || 'Customer',
+          email: ord.user?.email || 'customer@example.com',
+          phone: ord.shippingAddress?.phone || '',
+          address: ord.shippingAddress?.address || '',
+          city: ord.shippingAddress?.city || '',
+          state: ord.shippingAddress?.state || '',
+          zip: ord.shippingAddress?.postalCode || ord.shippingAddress?.zip || '',
+        },
+        items: Array.isArray(ord.orderItems)
+          ? ord.orderItems.map((item: any) => ({
+              product: {
+                id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
+                _id: item.product?._id || item.product,
+                name: item.name || item.product?.name || 'Product Item',
+                slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
+                category: item.product?.category || 'General',
+                categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
+                price: item.price || item.product?.price || 0,
+                rating: item.product?.rating || 4.5,
+                reviewCount: item.product?.reviewCount || 0,
+                image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
+                gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
+                inStock: true,
+                stockCount: 50,
+                shortDescription: '',
+                description: '',
+                specifications: [],
+                reviews: [],
+              },
+              quantity: item.quantity || 1,
+            }))
+          : ord.items || [],
+        paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
+        subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
+        tax: ord.taxPrice || ord.tax || 0,
+        shipping: ord.shippingPrice || ord.shipping || 0,
+        discount: ord.discount || 0,
+        total: ord.totalPrice || ord.total || 0,
+        orderStatus: ord.orderStatus || (ord.isDelivered ? 'Delivered' : 'Processing'),
+        isPaid: Boolean(ord.isPaid),
+        paidAt: ord.paidAt,
+        isDelivered: Boolean(ord.isDelivered),
+        deliveredAt: ord.deliveredAt,
+        createdAt: ord.createdAt || new Date().toISOString(),
+        updatedAt: ord.updatedAt || new Date().toISOString(),
+      }))
     } catch (error) {
-      console.warn('Falling back to local user orders:', getErrorMessage(error))
-      return getStoredOrFallbackUserOrders()
+      console.error('Failed to fetch user orders from backend:', getErrorMessage(error))
+      return []
     }
   },
 
@@ -563,8 +552,8 @@ export const api = {
         createdAt: updated.createdAt || new Date().toISOString(),
       }
     } catch (error) {
-      console.warn(`Falling back to local order cancel (${orderId}):`, getErrorMessage(error))
-      return this.updateOrderStatus(orderId, 'Cancelled')
+      console.error(`Failed to cancel order (${orderId}) on backend:`, getErrorMessage(error))
+      throw error
     }
   },
 
@@ -572,62 +561,61 @@ export const api = {
     try {
       const { data } = await apiClient.get('/orders')
       const payload = (data as any)?.data ?? data
-      if (Array.isArray(payload)) {
-        return payload.map((ord: any) => ({
-          id: ord._id || ord.id || `VRD-${Math.floor(100000 + Math.random() * 900000)}`,
-          _id: ord._id || ord.id,
-          user: ord.user ? { _id: ord.user._id, name: ord.user.name, email: ord.user.email } : undefined,
-          customer: {
-            name: ord.user?.name || ord.shippingAddress?.name || 'Store Customer',
-            email: ord.user?.email || 'customer@example.com',
-            phone: ord.shippingAddress?.phone || '+91 9876543210',
-            address: ord.shippingAddress?.address || '123 Market Street',
-            city: ord.shippingAddress?.city || 'Kochi',
-            state: ord.shippingAddress?.state || 'Kerala',
-            zip: ord.shippingAddress?.postalCode || ord.shippingAddress?.zip || '682001',
-          },
-          items: Array.isArray(ord.orderItems)
-            ? ord.orderItems.map((item: any) => ({
-                product: {
-                  id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
-                  name: item.name || 'Product Item',
-                  slug: (item.name || 'product').toLowerCase().replace(/\s+/g, '-'),
-                  category: 'General',
-                  categorySlug: 'general',
-                  price: item.price || 0,
-                  rating: 4.5,
-                  reviewCount: 10,
-                  image: item.image || '/images/products/green_tissue.png',
-                  gallery: [item.image || '/images/products/green_tissue.png'],
-                  inStock: true,
-                  stockCount: 50,
-                  shortDescription: '',
-                  description: '',
-                  specifications: [],
-                  reviews: [],
-                },
-                quantity: item.quantity || 1,
-              }))
-            : ord.items || [],
-          paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
-          subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
-          tax: ord.taxPrice || ord.tax || 0,
-          shipping: ord.shippingPrice || ord.shipping || 0,
-          discount: ord.discount || 0,
-          total: ord.totalPrice || ord.total || 0,
-          orderStatus: ord.orderStatus || (ord.isDelivered ? 'Delivered' : 'Processing'),
-          isPaid: Boolean(ord.isPaid),
-          paidAt: ord.paidAt,
-          isDelivered: Boolean(ord.isDelivered),
-          deliveredAt: ord.deliveredAt,
-          createdAt: ord.createdAt || new Date().toISOString(),
-          updatedAt: ord.updatedAt || new Date().toISOString(),
-        }))
-      }
-      return getFallbackOrders()
+      const rawList = Array.isArray(payload) ? payload : (Array.isArray(data) ? data : [])
+      return rawList.map((ord: any) => ({
+        id: ord._id || ord.id || `VRD-${Math.floor(100000 + Math.random() * 900000)}`,
+        _id: ord._id || ord.id,
+        user: ord.user ? { _id: ord.user._id, name: ord.user.name, email: ord.user.email } : undefined,
+        customer: {
+          name: ord.user?.name || ord.shippingAddress?.name || 'Store Customer',
+          email: ord.user?.email || 'customer@example.com',
+          phone: ord.shippingAddress?.phone || '',
+          address: ord.shippingAddress?.address || '',
+          city: ord.shippingAddress?.city || '',
+          state: ord.shippingAddress?.state || '',
+          zip: ord.shippingAddress?.postalCode || ord.shippingAddress?.zip || '',
+        },
+        items: Array.isArray(ord.orderItems)
+          ? ord.orderItems.map((item: any) => ({
+              product: {
+                id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
+                _id: item.product?._id || item.product,
+                name: item.name || item.product?.name || 'Product Item',
+                slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
+                category: item.product?.category || 'General',
+                categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
+                price: item.price || item.product?.price || 0,
+                rating: item.product?.rating || 4.5,
+                reviewCount: item.product?.reviewCount || 0,
+                image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
+                gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
+                inStock: true,
+                stockCount: 50,
+                shortDescription: '',
+                description: '',
+                specifications: [],
+                reviews: [],
+              },
+              quantity: item.quantity || 1,
+            }))
+          : ord.items || [],
+        paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
+        subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
+        tax: ord.taxPrice || ord.tax || 0,
+        shipping: ord.shippingPrice || ord.shipping || 0,
+        discount: ord.discount || 0,
+        total: ord.totalPrice || ord.total || 0,
+        orderStatus: ord.orderStatus || (ord.isDelivered ? 'Delivered' : 'Processing'),
+        isPaid: Boolean(ord.isPaid),
+        paidAt: ord.paidAt,
+        isDelivered: Boolean(ord.isDelivered),
+        deliveredAt: ord.deliveredAt,
+        createdAt: ord.createdAt || new Date().toISOString(),
+        updatedAt: ord.updatedAt || new Date().toISOString(),
+      }))
     } catch (error) {
-      console.warn('Falling back to local admin orders:', getErrorMessage(error))
-      return getFallbackOrders()
+      console.error('Failed to fetch admin orders from backend:', getErrorMessage(error))
+      return []
     }
   },
 
@@ -652,15 +640,8 @@ export const api = {
         createdAt: updated.createdAt || new Date().toISOString(),
       }
     } catch (error) {
-      console.warn(`Falling back to local order status update (${orderId}):`, getErrorMessage(error))
-      const fallbackList = getFallbackOrders()
-      const existing = fallbackList.find((o) => o.id === orderId || o._id === orderId) || fallbackList[0]
-      existing.orderStatus = status
-      if (status === 'Delivered') {
-        existing.isDelivered = true
-        existing.deliveredAt = new Date().toISOString()
-      }
-      return delay(existing, 300)
+      console.error(`Failed to update order status (${orderId}) on backend:`, getErrorMessage(error))
+      throw error
     }
   },
 
@@ -707,172 +688,6 @@ export const api = {
       return delay(results, 500)
     }
   },
-}
-
-let mockOrdersStore: Order[] | null = null
-
-function getFallbackOrders(): Order[] {
-  if (mockOrdersStore) return mockOrdersStore
-
-  const sampleProducts = products.slice(0, 4)
-  const now = Date.now()
-
-  mockOrdersStore = [
-    {
-      id: 'VRD-849201',
-      _id: '66881a29f8c4b12345678901',
-      user: { _id: 'u1', name: 'Muhammed Rahees', email: 'rahees@example.com' },
-      customer: {
-        name: 'Muhammed Rahees',
-        email: 'rahees@example.com',
-        phone: '+91 9847012345',
-        address: '12 Green Park Villa, MG Road',
-        city: 'Kochi',
-        state: 'Kerala',
-        zip: '682016',
-      },
-      items: [
-        { product: sampleProducts[0], quantity: 2 },
-        { product: sampleProducts[1], quantity: 1 },
-      ],
-      paymentMethod: 'razorpay',
-      subtotal: 1499,
-      shipping: 0,
-      tax: 75,
-      discount: 100,
-      total: 1474,
-      orderStatus: 'Processing',
-      isPaid: true,
-      paidAt: new Date(now - 3600000 * 2).toISOString(),
-      isDelivered: false,
-      createdAt: new Date(now - 3600000 * 3).toISOString(),
-      updatedAt: new Date(now - 3600000 * 2).toISOString(),
-      statusHistory: [
-        { status: 'Processing', timestamp: new Date(now - 3600000 * 3).toISOString(), note: 'Order placed & payment verified' },
-      ],
-    },
-    {
-      id: 'VRD-721094',
-      _id: '66881a29f8c4b12345678902',
-      user: { _id: 'u2', name: 'Anoop Sharma', email: 'anoop@example.com' },
-      customer: {
-        name: 'Anoop Sharma',
-        email: 'anoop@example.com',
-        phone: '+91 9895123456',
-        address: '45 Skyline Towers, Indiranagar',
-        city: 'Bengaluru',
-        state: 'Karnataka',
-        zip: '560038',
-      },
-      items: [{ product: sampleProducts[2] || sampleProducts[0], quantity: 3 }],
-      paymentMethod: 'cod',
-      subtotal: 2899,
-      shipping: 99,
-      tax: 145,
-      discount: 0,
-      total: 3143,
-      orderStatus: 'Shipped',
-      isPaid: false,
-      isDelivered: false,
-      createdAt: new Date(now - 3600000 * 24).toISOString(),
-      updatedAt: new Date(now - 3600000 * 6).toISOString(),
-      statusHistory: [
-        { status: 'Processing', timestamp: new Date(now - 3600000 * 24).toISOString(), note: 'Order confirmed with Cash on Delivery' },
-        { status: 'Shipped', timestamp: new Date(now - 3600000 * 6).toISOString(), note: 'Handed over to BlueDart Courier (AWB: BD948102)' },
-      ],
-    },
-    {
-      id: 'VRD-610482',
-      _id: '66881a29f8c4b12345678903',
-      user: { _id: 'u3', name: 'Priya Nair', email: 'priya.nair@example.com' },
-      customer: {
-        name: 'Priya Nair',
-        email: 'priya.nair@example.com',
-        phone: '+91 9744112233',
-        address: '78 Marine Drive, Flat 4B',
-        city: 'Mumbai',
-        state: 'Maharashtra',
-        zip: '400020',
-      },
-      items: [
-        { product: sampleProducts[0], quantity: 1 },
-        { product: sampleProducts[3] || sampleProducts[1], quantity: 2 },
-      ],
-      paymentMethod: 'razorpay',
-      subtotal: 3499,
-      shipping: 0,
-      tax: 175,
-      discount: 250,
-      total: 3424,
-      orderStatus: 'Delivered',
-      isPaid: true,
-      paidAt: new Date(now - 3600000 * 72).toISOString(),
-      isDelivered: true,
-      deliveredAt: new Date(now - 3600000 * 12).toISOString(),
-      createdAt: new Date(now - 3600000 * 72).toISOString(),
-      updatedAt: new Date(now - 3600000 * 12).toISOString(),
-      statusHistory: [
-        { status: 'Processing', timestamp: new Date(now - 3600000 * 72).toISOString(), note: 'Payment received' },
-        { status: 'Shipped', timestamp: new Date(now - 3600000 * 48).toISOString(), note: 'Dispatched via Delhivery Express' },
-        { status: 'Delivered', timestamp: new Date(now - 3600000 * 12).toISOString(), note: 'Delivered to customer' },
-      ],
-    },
-    {
-      id: 'VRD-490123',
-      _id: '66881a29f8c4b12345678904',
-      user: { _id: 'u4', name: 'Rahul Verma', email: 'rahul.v@example.com' },
-      customer: {
-        name: 'Rahul Verma',
-        email: 'rahul.v@example.com',
-        phone: '+91 9600123456',
-        address: '102 Tech Park Road',
-        city: 'Hyderabad',
-        state: 'Telangana',
-        zip: '500081',
-      },
-      items: [{ product: sampleProducts[1] || sampleProducts[0], quantity: 1 }],
-      paymentMethod: 'cod',
-      subtotal: 899,
-      shipping: 49,
-      tax: 45,
-      discount: 0,
-      total: 993,
-      orderStatus: 'Cancelled',
-      isPaid: false,
-      isDelivered: false,
-      createdAt: new Date(now - 3600000 * 96).toISOString(),
-      updatedAt: new Date(now - 3600000 * 90).toISOString(),
-      statusHistory: [
-        { status: 'Processing', timestamp: new Date(now - 3600000 * 96).toISOString() },
-        { status: 'Cancelled', timestamp: new Date(now - 3600000 * 90).toISOString(), note: 'Cancelled by user prior to shipment' },
-      ],
-    },
-  ]
-
-  return mockOrdersStore
-}
-
-function getStoredOrFallbackUserOrders(): Order[] {
-  const fallbackAll = getFallbackOrders()
-  const userOrders: Order[] = []
-
-  if (typeof window !== 'undefined') {
-    try {
-      const stored = sessionStorage.getItem('lastOrder') || localStorage.getItem('lastOrder')
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        if (parsed && parsed.id) {
-          userOrders.push({
-            ...parsed,
-            orderStatus: parsed.orderStatus || 'Processing',
-            isPaid: parsed.isPaid ?? true,
-          })
-        }
-      }
-    } catch {}
-  }
-
-  return userOrders.length > 0 ? [...userOrders, ...fallbackAll.slice(0, 2)] : fallbackAll
 }
 
 export type Api = typeof api
