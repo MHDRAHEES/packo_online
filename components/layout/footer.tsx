@@ -101,10 +101,10 @@ export function Footer() {
           <p className="font-medium">
             {`© ${new Date().getFullYear()} Packo.ofc. All rights reserved.`}
           </p>
-          <p className="font-medium flex items-center gap-1">
+          {/* <p className="font-medium flex items-center gap-1">
             <span>Crafted with</span>
             <span className="text-emerald-400 font-bold">Dark Green & White Excellence</span>
-          </p>
+          </p> */}
         </div>
       </div>
     </footer>

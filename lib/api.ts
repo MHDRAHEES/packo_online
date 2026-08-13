@@ -19,7 +19,7 @@ import type {
   UploadImageResult,
 } from '@/lib/types'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://packo-online-backend.onrender.com/api/v1' || 'http://localhost:8000/api/v1'
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -472,27 +472,27 @@ export const api = {
         },
         items: Array.isArray(ord.orderItems)
           ? ord.orderItems.map((item: any) => ({
-              product: {
-                id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
-                _id: item.product?._id || item.product,
-                name: item.name || item.product?.name || 'Product Item',
-                slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
-                category: item.product?.category || 'General',
-                categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
-                price: item.price || item.product?.price || 0,
-                rating: item.product?.rating || 4.5,
-                reviewCount: item.product?.reviewCount || 0,
-                image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
-                gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
-                inStock: true,
-                stockCount: 50,
-                shortDescription: '',
-                description: '',
-                specifications: [],
-                reviews: [],
-              },
-              quantity: item.quantity || 1,
-            }))
+            product: {
+              id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
+              _id: item.product?._id || item.product,
+              name: item.name || item.product?.name || 'Product Item',
+              slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
+              category: item.product?.category || 'General',
+              categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
+              price: item.price || item.product?.price || 0,
+              rating: item.product?.rating || 4.5,
+              reviewCount: item.product?.reviewCount || 0,
+              image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
+              gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
+              inStock: true,
+              stockCount: 50,
+              shortDescription: '',
+              description: '',
+              specifications: [],
+              reviews: [],
+            },
+            quantity: item.quantity || 1,
+          }))
           : ord.items || [],
         paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
         subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
@@ -577,27 +577,27 @@ export const api = {
         },
         items: Array.isArray(ord.orderItems)
           ? ord.orderItems.map((item: any) => ({
-              product: {
-                id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
-                _id: item.product?._id || item.product,
-                name: item.name || item.product?.name || 'Product Item',
-                slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
-                category: item.product?.category || 'General',
-                categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
-                price: item.price || item.product?.price || 0,
-                rating: item.product?.rating || 4.5,
-                reviewCount: item.product?.reviewCount || 0,
-                image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
-                gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
-                inStock: true,
-                stockCount: 50,
-                shortDescription: '',
-                description: '',
-                specifications: [],
-                reviews: [],
-              },
-              quantity: item.quantity || 1,
-            }))
+            product: {
+              id: item.product?._id || item.product || `prod-${Math.random().toString(36).substr(2, 5)}`,
+              _id: item.product?._id || item.product,
+              name: item.name || item.product?.name || 'Product Item',
+              slug: (item.name || item.product?.name || 'product').toLowerCase().replace(/\s+/g, '-'),
+              category: item.product?.category || 'General',
+              categorySlug: (item.product?.category || 'general').toLowerCase().replace(/\s+/g, '-'),
+              price: item.price || item.product?.price || 0,
+              rating: item.product?.rating || 4.5,
+              reviewCount: item.product?.reviewCount || 0,
+              image: resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null)),
+              gallery: [resolveValidProductImage(item.image || item.product?.image || (Array.isArray(item.product?.images) ? item.product?.images[0] : null))],
+              inStock: true,
+              stockCount: 50,
+              shortDescription: '',
+              description: '',
+              specifications: [],
+              reviews: [],
+            },
+            quantity: item.quantity || 1,
+          }))
           : ord.items || [],
         paymentMethod: (ord.paymentMethod === 'COD' || ord.paymentMethod === 'cod') ? 'cod' : 'razorpay',
         subtotal: ord.totalPrice ? Math.round(ord.totalPrice * 0.82) : ord.subtotal || 0,
